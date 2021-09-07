@@ -14,7 +14,7 @@ export default class Demo extends Phaser.Scene {
   }
 
   create() {
-    const logo = this.add.image(400, 70, 'logo');
+    const logo = this.add.image(400, 75, 'logo');
 
 
     this.player = this.add.rectangle(30,30,50,50, 0xffffff);
