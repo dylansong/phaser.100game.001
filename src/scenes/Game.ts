@@ -72,7 +72,8 @@ export default class GameScene extends Phaser.Scene {
     enemy.setOrigin(0.5, 0.5);
     this.physics.world.enable(enemy);
     enemy.body.velocity.x = 2;
-    // enemy.body.setCollideWorldBounds(true);
+    // @ts-ignore
+    enemy.body.setCollideWorldBounds(true);
 
     this.physics.world.on("worldbounds", function () {
       console.log("bounds");
