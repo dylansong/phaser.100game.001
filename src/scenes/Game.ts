@@ -1,70 +1,118 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Text = Phaser.GameObjects.Text;
-import config from "../config";
+import config, { GV } from "../config";
+import TimerEvent = Phaser.Time.TimerEvent;
+import Sprite = Phaser.GameObjects.Sprite;
+import Body = Phaser.Physics.Arcade.Body;
 
 export default class GameScene extends Phaser.Scene {
   timer: number = 0;
   player: Rectangle | undefined;
+  enemies: Sprite[];
   scoreText: Text | undefined;
   score: number = 0;
+  scoreTimer: TimerEvent | undefined;
   constructor() {
-    super('GameScene');
+    super("GameScene");
   }
-  init(data: any){
-    Object.assign(this.game.config,{status:'start'});
-    console.log('config', this.game.config)
-    console.log('data',data)
-    if(data.score){
-      console.log('have data')
+  init(data: any) {
+    Object.assign(this.game.config, { status: "start" });
+    console.log("config", this.game.config);
+    console.log("data", data);
+    if (data.score) {
+      console.log("have data");
       this.score = data.score;
-    }else{
+    } else {
       this.score = 0;
     }
   }
 
   preload() {
-    this.load.image('logo', 'assets/phaser3-logo.png');
+    this.load.image("logo", "assets/phaser3-logo.png");
   }
 
   create() {
-    const { width, height } = this.sys.canvas;
-    const logo = this.add.image(400, 75, 'logo');
-    this.scoreText = this.add.text(200,200,this.score.toString(),{fontSize:'48px'});
+    // this.game.
+    this.createScoreText();
+    this.createPlayer();
+    this.createScoreTimer();
 
-    this.player = this.add.rectangle(width/2,height-50/2,50,50, 0xffffff);
-    this.player.setOrigin(0.5,0.5);
-    const logoTween = this.tweens.add({
-      targets: logo,
-      y: 350,
-      duration: 1000,
-      ease: 'Sine.inOut',
-      yoyo: true,
-      repeat: -1
+    this.createEnemy();
+  }
+
+  createScoreText() {
+    this.scoreText = this.add.text(200, 200, this.score.toString(), {
+      fontSize: "48px",
     });
-    console.log(logoTween);
+  }
 
+  createPlayer() {
+    const { width, height } = this.sys.canvas;
+    this.player = this.add.rectangle(
+      width / 2,
+      height - 50 / 2,
+      GV.playerSize,
+      GV.playerSize,
+      0xffffff
+    );
+    this.player.setOrigin(0.5, 0.5);
+  }
 
+  createEnemy() {
+    const { width, height } = this.sys.canvas;
+    const enemy = this.add.rectangle(
+      width / 2,
+      0,
+      GV.enemyWidth,
+      GV.enemyHeight,
+      0xffffff
+    );
+
+    enemy.setOrigin(0.5, 0.5);
+    this.physics.world.enable(enemy);
+    enemy.body.velocity.x = 2;
+    // enemy.body.setCollideWorldBounds(true);
+
+    this.physics.world.on("worldbounds", function () {
+      console.log("bounds");
+    });
+  }
+
+  playerControl() {
+    const pointer = this.input.activePointer;
+    if (pointer.isDown) {
+      if (pointer.x - this.player!.x > GV.playerSize / 2) {
+        this.player!.x += GV.playerSpeed * GV.playerAccelaration;
+      } else if (this.player!.x - pointer.x > GV.playerSize / 2) {
+        this.player!.x -= GV.playerSpeed * GV.playerAccelaration;
+      } else {
+        this.player!.x = pointer.x;
+      }
+    }
+    if (pointer.x < GV.playerSize / 2) {
+      this.player!.x = GV.playerSize / 2;
+    }
+    if (pointer.x > this.sys.canvas.width - GV.playerSize / 2) {
+      this.player!.x = this.sys.canvas.width - GV.playerSize / 2;
+    }
+  }
+
+  scoreAction() {
+    console.log("score");
+    this.score++;
+  }
+
+  createScoreTimer() {
+    this.scoreTimer = this.time.addEvent({
+      callback: this.scoreAction,
+      callbackScope: this,
+      delay: 1000,
+      loop: true,
+    });
   }
   update(time: number, delta: number) {
-      // this.score ++;
-    // console.log(time);
-    this.timer += delta;
-    while (this.timer > 1000) {
-      this.score += 1;
-      this.timer -= 1000;
-    }
-    const pointer = this.input.activePointer;
-    if(pointer.isDown){
-
-      this.player!.x = pointer.x;
-    }
-
-    if(pointer.x<25){
-      this.player!.x = 25;
-    }
-    if(pointer.x>455){
-      this.player!.x = 455;
-    }
+    this.playerControl();
+    this.scoreText?.setText(this.score.toString());
   }
 }
