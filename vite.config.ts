@@ -4,8 +4,8 @@ import replace from '@rollup/plugin-replace';
 export default defineConfig({
   server:{
     hmr:{
-      protocol:'ws',
-      host:'3000-fuchsia-grasshopper-b0z18ouy.ws-us17.gitpod.io'
+      protocol:'https',
+      host:'localhost'
     }
   },
   build: {
