@@ -4,7 +4,7 @@ import Tween = Phaser.Tweens.Tween;
 
 
 export default class Menu extends Phaser.Scene {
-    title: string = 'Speed Spike';
+    title: string = 'Speed Spike!';
     startText: Text | undefined;
     constructor() {
         super('MenuScene');
