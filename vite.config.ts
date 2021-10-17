@@ -4,8 +4,8 @@ import replace from '@rollup/plugin-replace';
 export default defineConfig({
   server:{
     hmr:{
-      protocol:'https',
-      host:'localhost'
+      protocol:'wss',
+      port:443
     }
   },
   build: {

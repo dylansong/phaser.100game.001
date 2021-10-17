@@ -1,4 +1,4 @@
-# Learn more about this file at https://www.gitpod.io/docs/references/gitpod-yml
+
 tasks:
   - init: yarn
     command: yarn dev
@@ -21,3 +21,7 @@ github:
     addComment: false
     # add a "Review in Gitpod" button to the pull request's description (defaults to false)
     addBadge: true
+
+vscode:
+  extensions:
+    - vscodevim.vim
