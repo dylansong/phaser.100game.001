@@ -2,10 +2,11 @@ import { defineConfig } from 'vite';
 import replace from '@rollup/plugin-replace';
 
 export default defineConfig({
-  server:{
-    hmr:{
-      protocol:'wss',
-      port:443
+  server: {
+    hmr: {
+      // protocol:'wss',
+      // port: 443,
+
     }
   },
   build: {
